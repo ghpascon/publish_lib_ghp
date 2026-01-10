@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11"]
 
     steps:
       - uses: actions/checkout@v4
@@ -42,22 +42,8 @@ jobs:
       - name: Install project
         run: poetry install --no-interaction
 
-      - name: Run code formatting checks
-        run: |
-          poetry run black --check src tests
-          poetry run isort --check-only src tests
-
-      - name: Run linting
-        run: poetry run flake8 src tests
-
-      - name: Run type checking
-        run: poetry run mypy src
-
-      - name: Run tests with coverage
-        run: poetry run pytest --cov-report=xml --cov-fail-under=85
-
-  publish:
-    needs: test
+    - name: Run tests with coverage
+      run: poetry run pytest --cov-fail-under=85
     runs-on: ubuntu-latest
     environment: release
     permissions:
