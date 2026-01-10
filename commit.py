@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
 """
 Script para automatizar o processo de commit e release.
 Atualiza a versão, faz commit e cria tag para trigger do GitHub Actions.
+poetry run python commit.py
 """
 
 import subprocess
