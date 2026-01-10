@@ -11,11 +11,12 @@ A professional Python library demonstrating best practices for packaging and pub
 
 - **Professional packaging** with Poetry and pyproject.toml
 - **Automated CI/CD** with GitHub Actions
-- **Comprehensive testing** with pytest and coverage reporting
+- **Comprehensive testing** with pytest
 - **Semantic versioning** with automated releases
 - **Dynamic versioning** using importlib.metadata
-- **Security scanning** with bandit
-- **Pre-commit hooks** for code quality
+- **Automated release script** (`commit.py`) for easy publishing
+- **Template ready** - Use as base for your own Python packages
+- **Multiple classes** - Greeting and Operations functionality
 
 ## 📦 Installation
 
@@ -73,6 +74,9 @@ poetry install
 # Run all tests
 poetry run pytest
 
+# Run specific test file
+poetry run pytest tests/test_greeting.py
+poetry run pytest tests/test_operations.py
 ```
 
 
