@@ -1,7 +1,7 @@
 """Tests for the greeting module."""
 
 import pytest
-from src.publish_lib_ghp import Greeting
+from src.publish_lib_example import Greeting
 
 
 class TestGreeting:

@@ -1,6 +1,6 @@
 """Tests for the operations module."""
 
-from src.publish_lib_ghp.operations import Operations
+from src.publish_lib_example.operations import Operations
 
 
 class TestOperations:

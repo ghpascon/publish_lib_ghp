@@ -1,5 +1,5 @@
 class Operations:
-    """Class for performing operations in the publish_lib_ghp package."""
+    """Class for performing operations in the publish_lib_example package."""
     def __init__(self):
         pass
 

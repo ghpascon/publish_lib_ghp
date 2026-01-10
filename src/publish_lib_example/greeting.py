@@ -1,6 +1,3 @@
-"""Greeting module for publish_lib_ghp package."""
-
-
 class Greeting:
     """A simple greeting class that provides greeting functionality."""
     
