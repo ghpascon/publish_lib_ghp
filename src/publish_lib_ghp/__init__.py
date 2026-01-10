@@ -12,3 +12,5 @@ except Exception:
 
 from .greeting import Greeting
 from .operations import Operations
+
+__all__ = ["Greeting", "Operations", "__version__"]

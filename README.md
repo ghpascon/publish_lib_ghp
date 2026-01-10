@@ -29,12 +29,13 @@ pip install publish-lib-ghp
 ## 🔧 Usage
 
 ```python
-from publish_lib_ghp import Greeting
+from publish_lib_ghp import Greeting, Operations
 
-# Create a greeting instance
+# Create instances
 greeting = Greeting()
+operations = Operations()
 
-# Basic hello
+# Basic greeting functionality
 message = greeting.say_hello("World")
 print(message)  # Output: Hello, World!
 
@@ -45,6 +46,10 @@ print(morning_msg)  # Output: Good morning, Alice!
 # Say goodbye
 goodbye_msg = greeting.say_goodbye("Bob")
 print(goodbye_msg)  # Output: Goodbye, Bob!
+
+# Mathematical operations
+result = operations.add(5, 3)
+print(result)  # Output: 8
 ```
 
 ## 🛠️ Development
@@ -151,6 +156,25 @@ Get a time-specific greeting.
 
 **Raises:**
 - ValueError: If name is invalid or time_of_day is not recognized
+
+### Operations Class
+
+#### `add(a: int, b: int) -> int`
+
+Perform addition of two integers.
+
+**Parameters:**
+- `a` (int): The first number
+- `b` (int): The second number
+
+**Returns:**
+- int: The sum of a and b
+
+**Example:**
+```python
+ops = Operations()
+result = ops.add(5, 3)  # Returns 8
+```
 
 ## 🚀 Release Process
 
