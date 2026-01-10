@@ -3,7 +3,6 @@
 [![PyPI version](https://badge.fury.io/py/publish-lib-ghp.svg)](https://badge.fury.io/py/publish-lib-ghp)
 [![Python versions](https://img.shields.io/pypi/pyversions/publish-lib-ghp.svg)](https://pypi.org/project/publish-lib-ghp/)
 [![Tests](https://github.com/ghpascon/publish_lib_ghp/workflows/Test/badge.svg)](https://github.com/ghpascon/publish_lib_ghp/actions?query=workflow%3ATest)
-[![Code Quality](https://github.com/ghpascon/publish_lib_ghp/workflows/Code%20Quality/badge.svg)](https://github.com/ghpascon/publish_lib_ghp/actions?query=workflow%3A%22Code+Quality%22)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A professional Python library demonstrating best practices for packaging and publishing to PyPI using modern tools and automated CI/CD.
@@ -13,8 +12,6 @@ A professional Python library demonstrating best practices for packaging and pub
 - **Professional packaging** with Poetry and pyproject.toml
 - **Automated CI/CD** with GitHub Actions
 - **Comprehensive testing** with pytest and coverage reporting
-- **Code quality enforcement** with Black, isort, flake8, and mypy
-- **Trusted publishing** to PyPI (no API tokens required)
 - **Semantic versioning** with automated releases
 - **Dynamic versioning** using importlib.metadata
 - **Security scanning** with bandit
@@ -68,9 +65,6 @@ cd publish_lib_ghp
 
 # Install dependencies
 poetry install
-
-# Install pre-commit hooks
-poetry run pre-commit install
 ```
 
 ### Testing
@@ -79,29 +73,8 @@ poetry run pre-commit install
 # Run all tests
 poetry run pytest
 
-# Run tests with coverage
-poetry run pytest --cov=src/publish_lib_ghp --cov-report=html
-
-# Run specific test file
-poetry run pytest tests/test_greeting.py
 ```
 
-### Code Quality
-
-```bash
-# Format code
-poetry run black src tests
-poetry run isort src tests
-
-# Lint code
-poetry run flake8 src tests
-
-# Type checking
-poetry run mypy src
-
-# Run all quality checks
-poetry run pre-commit run --all-files
-```
 
 ### Building
 
@@ -178,32 +151,47 @@ result = ops.add(5, 3)  # Returns 8
 
 ## 🚀 Release Process
 
-This project uses automated releases via GitHub Actions. See [RELEASE.md](RELEASE.md) for detailed instructions.
+This project uses automated releases via GitHub Actions. Use the included `commit.py` script for easy releases!
 
-### Quick Release
+### Automated Release (Recommended)
+
+```bash
+# Use the automated script
+python commit.py
+```
+
+The script will:
+1. Ask for version type (patch, minor, major)
+2. Ask for commit message
+3. Update version automatically
+4. Commit and create tag
+5. Trigger GitHub Actions to publish
+
+### Manual Release
 
 ```bash
 # Update version
 poetry version patch  # or minor/major
 
 # Commit and tag
-git add pyproject.toml
-git commit -m "Bump version to v$(poetry version --short)"
+git add .
+git commit -m "Your commit message"
 git push origin main
 git tag "v$(poetry version --short)"
 git push origin "v$(poetry version --short)"
 ```
 
 The CI/CD pipeline will automatically:
-1. Run tests across multiple Python versions
-2. Perform code quality checks
-3. Build the package
-4. Publish to PyPI
+1. Run tests across multiple Python versions (3.11, 3.12, 3.13)
+2. Build the package
+3. Publish to PyPI
 
 ## 📝 Documentation
 
+- [Setup Guide](SETUP_GUIDE.md) - How to use this project as a template
 - [Release Process](RELEASE.md) - How to create and publish releases
 - [Publishing Guide](PUBLISHING.md) - Comprehensive guide for package publishing
+- [PyPI Setup](PYPI_SETUP.md) - PyPI configuration instructions
 - [Contributing](CONTRIBUTING.md) - How to contribute to this project
 - [Security Policy](SECURITY.md) - Security guidelines and reporting
 - [Changelog](CHANGELOG.md) - Project history and changes
@@ -216,14 +204,17 @@ publish_lib_ghp/
 │   └── workflows/          # GitHub Actions CI/CD pipelines
 ├── src/
 │   └── publish_lib_ghp/    # Main package code
+│       ├── __init__.py     # Package initialization
+│       ├── greeting.py     # Greeting functionality
+│       └── operations.py   # Mathematical operations
 ├── tests/                  # Test suite
-├── pyproject.toml         # Project configuration (single source of truth)
+│   ├── test_greeting.py    # Tests for Greeting class
+│   └── test_operations.py  # Tests for Operations class
+├── commit.py              # Automated release script
+├── pyproject.toml         # Project configuration
 ├── README.md              # This file
+├── SETUP_GUIDE.md         # Template usage guide
 ├── CHANGELOG.md           # Version history
-├── RELEASE.md             # Release process guide
-├── PUBLISHING.md          # Publishing guide
-├── CONTRIBUTING.md        # Contribution guidelines
-├── SECURITY.md            # Security policy
 └── LICENSE                # MIT License
 ```
 
@@ -232,10 +223,9 @@ publish_lib_ghp/
 This project follows security best practices:
 
 - ✅ No hardcoded secrets or API tokens
-- ✅ Trusted publishing to PyPI via GitHub Actions
-- ✅ Automated security scanning with bandit
-- ✅ Dependency vulnerability checking
-- ✅ Code signing and verification
+- ✅ Secure publishing to PyPI via GitHub Actions
+- ✅ Automated testing across multiple Python versions
+- ✅ Clean and minimal dependencies
 
 See our [Security Policy](SECURITY.md) for details.
 
@@ -248,10 +238,14 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
 3. Make your changes and add tests
-4. Run quality checks: `poetry run pre-commit run --all-files`
+4. Run tests: `poetry run pytest`
 5. Commit your changes: `git commit -m 'Add amazing feature'`
 6. Push to the branch: `git push origin feature/amazing-feature`
 7. Open a Pull Request
+
+## 🎯 Using as Template
+
+Want to create your own Python package? See [SETUP_GUIDE.md](SETUP_GUIDE.md) for step-by-step instructions on how to use this project as a template.
 
 ## 📄 License
 
