@@ -63,7 +63,7 @@ jobs:
         run: python -m build
 
       - name: Check package
-        run: twine check dist/* --verbose
+        run: twine check dist/*
 
       - name: Publish to PyPI
         env:

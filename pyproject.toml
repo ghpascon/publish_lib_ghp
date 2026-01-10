@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "publish-lib-ghp"
-version = "0.2.2"
+version = "0.2.3"
 description = "A simple Python library demonstrating how to publish packages to PyPI"
 authors = ["Gabriel Henrique Pascon <gh.pascon@gmail.com>"]
 license = "MIT"
