@@ -6,7 +6,6 @@ poetry run python commit.py
 
 import subprocess
 import sys
-from typing import Optional
 
 
 def run_command(command: str, check: bool = True) -> subprocess.CompletedProcess:
@@ -39,7 +38,7 @@ def get_current_version() -> str:
 def update_version(version_type: str) -> str:
     """Atualiza a versão usando poetry version."""
     print(f"📝 Atualizando versão ({version_type})...")
-    result = run_command(f"poetry version {version_type}")
+    run_command(f"poetry version {version_type}")
     
     # Extrai a nova versão do output do poetry
     new_version = get_current_version()
@@ -105,7 +104,7 @@ def main():
     
     # Mostrar resumo
     current_version = get_current_version()
-    print(f"\n📋 Resumo da operação:")
+    print("\n📋 Resumo da operação:")
     print(f"   Versão atual: {current_version}")
     print(f"   Tipo de atualização: {version_type}")
     print(f"   Mensagem do commit: {commit_message}")

@@ -1,7 +1,5 @@
 """publish_lib_ghp - A simple Python library demonstrating how to publish packages to PyPI."""
 
-import sys
-
 from importlib.metadata import version
 
 try:

@@ -1,6 +1,5 @@
 """Tests for the operations module."""
 
-import pytest
 from src.publish_lib_ghp.operations import Operations
 
 
