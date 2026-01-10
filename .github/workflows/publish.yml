@@ -13,24 +13,29 @@ jobs:
         python-version: ["3.11", "3.12", "3.13"]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
-      with:
-        version: latest
-        virtualenvs-create: false
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+        shell: bash
 
-    - name: Install dependencies
-      run: poetry install --no-interaction
+      - name: Configure Poetry
+        run: |
+          poetry config virtualenvs.create false
+          poetry config virtualenvs.in-project false
 
-    - name: Run tests with coverage
-      run: poetry run pytest --cov-fail-under=85
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Run tests with coverage
+        run: poetry run pytest --cov-fail-under=85
 
   publish:
     needs: test
@@ -40,39 +45,44 @@ jobs:
       id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
-      with:
-        version: latest
-        virtualenvs-create: false
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 - || pip install poetry
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+        shell: bash
 
-    - name: Verify tag matches pyproject.toml version
-      run: |
-        PROJECT_VERSION=$(poetry version --short)
-        TAG_VERSION=${GITHUB_REF#refs/tags/v}
-        echo "Project version: $PROJECT_VERSION"
-        echo "Tag version: $TAG_VERSION"
-        if [ "$PROJECT_VERSION" != "$TAG_VERSION" ]; then
-          echo "Error: Project version ($PROJECT_VERSION) does not match tag version ($TAG_VERSION)"
-          exit 1
-        fi
+      - name: Configure Poetry
+        run: |
+          poetry config virtualenvs.create false
+          poetry config virtualenvs.in-project false
 
-    - name: Build package
-      run: poetry build
+      - name: Verify tag matches pyproject.toml version
+        run: |
+          PROJECT_VERSION=$(poetry version --short)
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          echo "Project version: $PROJECT_VERSION"
+          echo "Tag version: $TAG_VERSION"
+          if [ "$PROJECT_VERSION" != "$TAG_VERSION" ]; then
+            echo "Error: Project version ($PROJECT_VERSION) does not match tag version ($TAG_VERSION)"
+            exit 1
+          fi
 
-    - name: Check package
-      run: |
-        pip install twine
-        twine check dist/*
+      - name: Build package
+        run: poetry build
 
-    - name: Publish package distributions to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        verbose: true
+      - name: Check package
+        run: |
+          pip install twine
+          twine check dist/*
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          verbose: true

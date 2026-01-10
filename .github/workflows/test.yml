@@ -24,11 +24,15 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: latest
-          virtualenvs-create: false
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 - || pip install poetry
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+      shell: bash
 
+    - name: Configure Poetry
+      run: |
+        poetry config virtualenvs.create false
+        poetry config virtualenvs.in-project false
       - name: Install dependencies
         run: poetry install --no-interaction
 
