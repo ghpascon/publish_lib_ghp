@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "publish_lib_ghp"
-version = "0.2.9"
+name = "publish_lib_example"
+version = "1.0.0"
 description = "A simple Python library demonstrating how to publish packages to PyPI"
 authors = ["Gabriel Henrique Pascon <gh.pascon@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/ghpascon/publish_lib_ghp"
-repository = "https://github.com/ghpascon/publish_lib_ghp"
-documentation = "https://github.com/ghpascon/publish_lib_ghp#readme"
+homepage = "https://github.com/ghpascon/publish_lib_example"
+repository = "https://github.com/ghpascon/publish_lib_example"
+documentation = "https://github.com/ghpascon/publish_lib_example#readme"
 keywords = ["python", "library", "example", "pypi", "packaging"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -20,7 +20,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Typing :: Typed",
 ]
-packages = [{include = "publish_lib_ghp", from = "src"}]
+packages = [{include = "publish_lib_example", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -46,7 +46,7 @@ addopts = [
     "--strict-markers",
     "--strict-config",
     "--verbose",
-    "--cov=src/publish_lib_ghp",
+    "--cov=src/publish_lib_example",
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-report=xml",

@@ -1,7 +1,7 @@
-from publish_lib_ghp import Greeting, Operations
+from publish_lib_example import Greeting, Operations
 
 def main():
-    print("Testing greeting and operations from publish_lib_ghp")
+    print("Testing greeting and operations")
     greeter = Greeting()
     print(greeter.say_hello("Gabriel"))
 
