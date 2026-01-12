@@ -41,6 +41,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -49,7 +51,32 @@ jobs:
       - name: Install Poetry
         run: pip install poetry
 
+      - name: Configure Poetry
+        run: poetry config virtualenvs.create false
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Check for existing tags
+        id: check-tags
+        run: |
+          if git tag -l | grep -q .; then
+            echo "has-tags=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-tags=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create initial tag if none exists
+        if: steps.check-tags.outputs.has-tags == 'false'
+        run: |
+          CURRENT_VERSION=$(poetry version --short)
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "v$CURRENT_VERSION"
+          git push origin "v$CURRENT_VERSION"
+
       - name: Bump version, commit and tag
+        if: steps.check-tags.outputs.has-tags == 'true'
         run: |
           if [[ "${{ github.event.head_commit.message }}" == major* ]]; then
             poetry version major
