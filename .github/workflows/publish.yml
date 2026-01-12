@@ -2,23 +2,22 @@ name: Publish to PyPI
 
 on:
   push:
-    tags:
-      - "v*.*.*" # dispara quando você fizer push de uma tag vX.X.X
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11"]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.11"
 
       - name: Install Poetry
         run: pip install poetry
@@ -32,8 +31,53 @@ jobs:
       - name: Run tests
         run: poetry run pytest --verbose
 
-  publish:
+  update-version:
     needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message, 'major') || startsWith(github.event.head_commit.message, 'minor') || startsWith(github.event.head_commit.message, 'patch')
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Configure Poetry
+        run: poetry config virtualenvs.create false
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Update version
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == major* ]]; then
+            poetry version major
+          elif [[ "${{ github.event.head_commit.message }}" == minor* ]]; then
+            poetry version minor
+          elif [[ "${{ github.event.head_commit.message }}" == patch* ]]; then
+            poetry version patch
+          fi
+
+      - name: Commit version update and create tag
+        run: |
+          VERSION=$(poetry version --short)
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add pyproject.toml
+          git commit -m "chore: bump version to $VERSION [skip ci]"
+          git tag "v$VERSION"
+          git push origin main
+          git push origin "v$VERSION"
+
+  publish:
+    needs: update-version
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
 
