@@ -43,6 +43,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
@@ -60,33 +61,42 @@ jobs:
       - name: Check for existing tags
         id: check-tags
         run: |
-          if git tag -l | grep -q .; then
-            echo "has-tags=true" >> $GITHUB_OUTPUT
+          if git tag -l | grep -q 'v[0-9]'; then
+            echo "has-version-tags=true" >> $GITHUB_OUTPUT
+            echo "Found existing version tags"
           else
-            echo "has-tags=false" >> $GITHUB_OUTPUT
+            echo "has-version-tags=false" >> $GITHUB_OUTPUT
+            echo "No version tags found"
           fi
 
       - name: Create initial tag if none exists
-        if: steps.check-tags.outputs.has-tags == 'false'
+        if: steps.check-tags.outputs.has-version-tags == 'false'
         run: |
           CURRENT_VERSION=$(poetry version --short)
+          echo "Creating initial tag v$CURRENT_VERSION"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag "v$CURRENT_VERSION"
           git push origin "v$CURRENT_VERSION"
 
       - name: Bump version, commit and tag
-        if: steps.check-tags.outputs.has-tags == 'true'
+        if: steps.check-tags.outputs.has-version-tags == 'true'
         run: |
+          echo "Bumping version based on commit message: ${{ github.event.head_commit.message }}"
+
           if [[ "${{ github.event.head_commit.message }}" == major* ]]; then
+            echo "Performing major version bump"
             poetry version major
           elif [[ "${{ github.event.head_commit.message }}" == minor* ]]; then
+            echo "Performing minor version bump"
             poetry version minor
           elif [[ "${{ github.event.head_commit.message }}" == patch* ]]; then
+            echo "Performing patch version bump"
             poetry version patch
           fi
 
           VERSION=$(poetry version --short)
+          echo "New version: $VERSION"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -97,3 +107,5 @@ jobs:
 
           git push
           git push origin "v$VERSION"
+
+          echo "Successfully created tag v$VERSION"

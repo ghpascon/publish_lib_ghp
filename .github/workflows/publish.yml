@@ -20,6 +20,11 @@ jobs:
       - name: Install build tools
         run: pip install --upgrade build twine poetry
 
+      - name: Debug tag information
+        run: |
+          echo "GitHub ref: $GITHUB_REF"
+          echo "Tag version from ref: ${GITHUB_REF#refs/tags/v}"
+
       - name: Verify tag matches pyproject.toml version
         run: |
           PROJECT_VERSION=$(poetry version --short)
@@ -30,6 +35,7 @@ jobs:
             echo "Error: Project version ($PROJECT_VERSION) does not match tag version ($TAG_VERSION)"
             exit 1
           fi
+          echo "Version verification successful!"
 
       - name: Build package
         run: python -m build
