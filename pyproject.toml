@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "publish_lib_example"
-version = "0.0.0"
+version = "0.1.0"
 description = "A simple Python library demonstrating how to publish packages to PyPI"
 authors = ["Gabriel Henrique Pascon <gh.pascon@gmail.com>"]
 license = "MIT"
