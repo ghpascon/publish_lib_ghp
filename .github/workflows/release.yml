@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build tools
+        run: pip install --upgrade build twine poetry
+
+      - name: Verify tag matches pyproject.toml version
+        run: |
+          PROJECT_VERSION=$(poetry version --short)
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+
+          if [ "$PROJECT_VERSION" != "$TAG_VERSION" ]; then
+            echo "Version mismatch"
+            exit 1
+          fi
+
+      - name: Build package
+        run: python -m build
+
+      - name: Check package
+        run: twine check dist/*
+
+      - name: Publish to PyPI
+        run: |
+          twine upload dist/* \
+            --username __token__ \
+            --password "${{ secrets.PYPI_API_TOKEN }}"

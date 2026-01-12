@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Configure Poetry
+        run: poetry config virtualenvs.create false
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Run tests
+        run: poetry run pytest -v
+
+  bump-version:
+    needs: test
+    runs-on: ubuntu-latest
+    if: |
+      startsWith(github.event.head_commit.message, 'major') ||
+      startsWith(github.event.head_commit.message, 'minor') ||
+      startsWith(github.event.head_commit.message, 'patch')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Bump version, commit and tag
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == major* ]]; then
+            poetry version major
+          elif [[ "${{ github.event.head_commit.message }}" == minor* ]]; then
+            poetry version minor
+          elif [[ "${{ github.event.head_commit.message }}" == patch* ]]; then
+            poetry version patch
+          fi
+
+          VERSION=$(poetry version --short)
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add pyproject.toml
+          git commit -m "chore: bump version to $VERSION [skip ci]"
+          git tag "v$VERSION"
+
+          git push
+          git push origin "v$VERSION"
